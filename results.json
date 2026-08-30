@@ -1,0 +1,129 @@
+{
+ "asof": "2026-08-30T03:42:42",
+ "symbol": "BTCUSDT",
+ "meta": {
+  "n_raw_trades": 4000,
+  "first_timestamp_ms": 1788056165515,
+  "last_timestamp_ms": 1788057477569,
+  "horizon_seconds": 1312.0559946127912,
+  "n_tied_timestamps": 1367
+ },
+ "n_buy": 2284,
+ "n_sell": 1716,
+ "horizon_seconds": 1312.0559946127912,
+ "mu": [
+  1.037470028370909,
+  0.6044075237770464
+ ],
+ "alpha": [
+  [
+   27.761871007004423,
+   0.34443766607166193
+  ],
+  [
+   0.3623246885278494,
+   36.8002754729593
+  ]
+ ],
+ "beta": [
+  [
+   69.31471805599453,
+   69.31471805599453
+  ],
+  [
+   69.31471805599453,
+   69.31471805599453
+  ]
+ ],
+ "kernel_norms": [
+  [
+   0.40051913627604374,
+   0.004969185127369554
+  ],
+  [
+   0.005227240313307666,
+   0.5309157492818614
+  ]
+ ],
+ "half_life_seconds": [
+  [
+   0.01,
+   0.01
+  ],
+  [
+   0.01,
+   0.01
+  ]
+ ],
+ "branching_ratio": 0.5311146468145175,
+ "best_half_life_seconds": 0.01,
+ "timescale_scan": [
+  {
+   "half_life_seconds": 0.01,
+   "log_likelihood": 5225.915436942778,
+   "branching_ratio": 0.5311146468145175
+  },
+  {
+   "half_life_seconds": 0.05,
+   "log_likelihood": 3448.2557084470277,
+   "branching_ratio": 0.571213986148251
+  },
+  {
+   "half_life_seconds": 0.1,
+   "log_likelihood": 2674.2358603327134,
+   "branching_ratio": 0.5988913052285921
+  },
+  {
+   "half_life_seconds": 0.25,
+   "log_likelihood": 1669.7886828515188,
+   "branching_ratio": 0.6532527027468186
+  },
+  {
+   "half_life_seconds": 0.5,
+   "log_likelihood": 954.5847689527545,
+   "branching_ratio": 0.7034220437330628
+  },
+  {
+   "half_life_seconds": 1.0,
+   "log_likelihood": 310.16858270731313,
+   "branching_ratio": 0.7631551421550912
+  },
+  {
+   "half_life_seconds": 2.0,
+   "log_likelihood": -255.17278482109805,
+   "branching_ratio": 0.8285378312357771
+  },
+  {
+   "half_life_seconds": 5.0,
+   "log_likelihood": -881.1065424362328,
+   "branching_ratio": 0.8996072943181684
+  },
+  {
+   "half_life_seconds": 15.0,
+   "log_likelihood": -1527.1441891428526,
+   "branching_ratio": 0.9283736162804485
+  }
+ ],
+ "branching_ratio_range": [
+  0.5311146468145175,
+  0.9283736162804485
+ ],
+ "log_likelihood": 5225.915436942778,
+ "poisson_log_likelihood": -2273.3281174418107,
+ "likelihood_ratio": 14998.487108769177,
+ "residual_tests": [
+  {
+   "n": 2283,
+   "mean": 1.0004208432520172,
+   "ks_stat": 0.2252268167857059,
+   "p_value": 3.0748028863213672e-102
+  },
+  {
+   "n": 1715,
+   "mean": 0.9996256827960888,
+   "ks_stat": 0.27846322857853134,
+   "p_value": 4.447165758988013e-118
+  }
+ ],
+ "self_excitation_share": 0.9891715310211339
+}
