@@ -116,6 +116,14 @@ takes any pair of event-time arrays.
 Every number above is injected from `results.json`; the generator fails if one
 is missing.
 
+## Scope
+
+This reads public, unauthenticated market data and fits a statistical model to
+it. It holds no credentials, connects to no account, and places no orders — the
+only network call is a read-only GET for historical trades. Nothing here is
+investment advice, and the headline model is reported as **rejected**, so no
+result in this repository should be relied on to predict anything.
+
 ## Reference
 
 Rambaldi, Pennesi & Lillo, *Modeling FX market activity around macroeconomic
