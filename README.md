@@ -1,5 +1,10 @@
 # HawkesDiffusion
 
+[![CI](https://github.com/Leo-Y-Zhang/HawkesDiffusion/actions/workflows/ci.yml/badge.svg)](https://github.com/Leo-Y-Zhang/HawkesDiffusion/actions/workflows/ci.yml)
+![python](https://img.shields.io/badge/python-3.11%2B-blue)
+![tests](https://img.shields.io/badge/tests-31-brightgreen)
+![licence](https://img.shields.io/badge/licence-proprietary%20source--available-lightgrey)
+
 A Hawkes process is a point process that excites itself: every event raises the
 chance of the next, and the effect decays. With two streams it also
 cross-excites, so you can ask how hard a shock in one stream hits the other and
@@ -112,10 +117,12 @@ choice, which is what produced the table above.
 Requires `numpy` and `scipy`.
 
 ```
-python analyse_multi.py                      # both kernels, the headline result
-python analyse.py --n-trades 4000            # single-exponential only
-python analyse.py --n-trades 4000 --refresh  # pull fresh trades
-python -m unittest discover -s tests -v      # 29 tests, offline
+pip install -e .
+
+hawkesdiffusion fit           # both kernels on real trade flow
+hawkesdiffusion recover       # simulate known parameters and fit them back
+hawkesdiffusion residuals     # time-rescaling goodness of fit
+hawkesdiffusion verify        # offline suite
 ```
 
 ## A note on the streams
@@ -133,8 +140,9 @@ takes any pair of event-time arrays.
 | `src/hawkesdiffusion/hawkes.py` | likelihood, MLE, timescale scan, simulation, residuals |
 | `src/hawkesdiffusion/multiexp.py` | multi-exponential kernel, precomputed design, exact gradient |
 | `src/hawkesdiffusion/binance.py` | real trade event times, tie handling, caching |
-| `analyse.py` | single-kernel fit, writes `results.json` and `kernels.png` |
-| `analyse_multi.py` | both kernels compared, writes `results_multi.json` |
+| `src/hawkesdiffusion/analysis.py` | both kernels compared; writes `results_multi.json` |
+| `src/hawkesdiffusion/__main__.py` | CLI |
+| `scripts/check_spdx.py` | one-line licence header check, enforced in CI |
 | `make_readme.py` | renders this file from `results.json` |
 
 Every number above is injected from `results.json` and `results_multi.json`;

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LicenseRef-Leo-Y-Zhang-Proprietary
 """Tests for the multi-exponential kernel.
 
 The decisive ones: it must reduce exactly to the single-exponential model when
@@ -15,10 +16,16 @@ from scipy import stats
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-from hawkesdiffusion.hawkes import log_likelihood, simulate       # noqa: E402
-from hawkesdiffusion.multiexp import (                            # noqa: E402
-    MultiExpDesign, branching_matrix_multi, branching_ratio_multi,
-    fit_multi_exp, geometric_betas, kernel_values, rescaled_residuals_multi)
+from hawkesdiffusion.hawkes import log_likelihood, simulate  # noqa: E402
+from hawkesdiffusion.multiexp import (  # noqa: E402
+    MultiExpDesign,
+    branching_matrix_multi,
+    branching_ratio_multi,
+    fit_multi_exp,
+    geometric_betas,
+    kernel_values,
+    rescaled_residuals_multi,
+)
 
 
 class TestAgreesWithSingleExponential(unittest.TestCase):
@@ -54,8 +61,10 @@ class TestGradient(unittest.TestCase):
         f0, g = des.neg_ll_and_grad(x)
         eps = 1e-6
         for idx in (0, 1, 3, 7, len(x) - 1):
-            xp = x.copy(); xp[idx] += eps
-            xm = x.copy(); xm[idx] -= eps
+            xp = x.copy()
+            xp[idx] += eps
+            xm = x.copy()
+            xm[idx] -= eps
             num = (des.neg_ll_and_grad(xp)[0] - des.neg_ll_and_grad(xm)[0]) / (2 * eps)
             self.assertAlmostEqual(num, g[idx], delta=1e-3 * max(1.0, abs(g[idx])),
                                    msg=f"gradient mismatch at {idx}")

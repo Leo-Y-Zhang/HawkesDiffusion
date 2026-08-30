@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LicenseRef-Leo-Y-Zhang-Proprietary
 """Bivariate Hawkes process with exponential kernels.
 
 A Hawkes process is a point process that excites itself: every event raises the
@@ -124,9 +125,30 @@ def fit(times_by_type, horizon, x0=None, maxiter=600):
                    options={"maxiter": maxiter * len(x0), "fatol": 1e-6,
                             "xatol": 1e-6, "adaptive": True})
     mu, alpha, beta = _unpack(res.x, d)
+    alpha = _zero_unidentified(alpha, times_by_type)
     return {"mu": mu, "alpha": alpha, "beta": beta,
             "log_likelihood": -res.fun, "success": bool(res.success),
             "n_iter": int(res.nit)}
+
+
+def _zero_unidentified(alpha, times_by_type, min_events=5):
+    """Zero the kernel columns of streams that have (almost) no events.
+
+    alpha[i][j] multiplies a sum over the events of stream j. If stream j is
+    empty that sum is zero for every t, so alpha[i][j] does not appear in the
+    likelihood at all: it is unidentified, the optimiser leaves it wherever it
+    started, and the spectral radius then reports whatever noise it landed on.
+    Observed in practice as a branching ratio of 4e8 on a simulated pair whose
+    second stream was deliberately silent.
+
+    Zero is the right normalisation, not a fudge: a stream with no events
+    excites nothing, so its kernel norm genuinely is zero.
+    """
+    alpha = np.array(alpha, dtype=float, copy=True)
+    for j, t in enumerate(times_by_type):
+        if len(t) < min_events:
+            alpha[:, j] = 0.0
+    return alpha
 
 
 def branching_matrix(alpha, beta):
@@ -254,7 +276,7 @@ def fit_fixed_beta(times_by_type, horizon, beta, maxiter=400):
                             "xatol": 1e-6, "adaptive": True})
     x = np.clip(res.x, -60.0, 60.0)
     mu = np.exp(x[:d])
-    alpha = np.exp(x[d:]).reshape(d, d)
+    alpha = _zero_unidentified(np.exp(x[d:]).reshape(d, d), times_by_type)
     return {"mu": mu, "alpha": alpha, "beta": beta,
             "log_likelihood": -res.fun, "success": bool(res.success)}
 

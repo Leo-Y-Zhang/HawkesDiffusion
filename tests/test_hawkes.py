@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LicenseRef-Leo-Y-Zhang-Proprietary
 """Tests for the Hawkes fitter.
 
 The one that matters is parameter recovery: simulate a process whose parameters
@@ -17,9 +18,17 @@ from scipy import stats
 sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
-from hawkesdiffusion.hawkes import (      # noqa: E402
-    branching_matrix, branching_ratio, fit, half_life, intensity_at_events,
-    log_likelihood, rescaled_residuals, simulate, _recursive_state)
+from hawkesdiffusion.hawkes import (  # noqa: E402
+    _recursive_state,
+    branching_matrix,
+    branching_ratio,
+    fit,
+    half_life,
+    intensity_at_events,
+    log_likelihood,
+    rescaled_residuals,
+    simulate,
+)
 
 
 class TestRecursiveState(unittest.TestCase):
@@ -196,3 +205,29 @@ class TestGoodnessOfFit(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestUnidentifiedStreams(unittest.TestCase):
+    """A silent stream must not poison the branching ratio.
+
+    alpha[i][j] multiplies a sum over the events of stream j, so an empty
+    stream j leaves that parameter absent from the likelihood entirely. Before
+    this was handled the fitter returned a branching ratio of 4e8 on a pair
+    whose second stream was deliberately silent.
+    """
+
+    def test_empty_second_stream_gives_a_sane_branching_ratio(self):
+        mu = [0.5, 1e-8]
+        alpha = [[0.9, 0.0], [0.0, 0.0]]
+        beta = [[2.0, 5.0], [5.0, 5.0]]
+        times = simulate(mu, alpha, beta, horizon=1500.0, seed=7)
+        self.assertLess(len(times[1]), 5, "second stream should be silent")
+        got = fit(times, 1500.0)
+        n = branching_ratio(got["alpha"], got["beta"])
+        self.assertLess(n, 1.0, f"branching ratio ran away to {n}")
+        self.assertGreater(n, 0.0)
+
+    def test_columns_of_silent_streams_are_zeroed(self):
+        times = [np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]), np.array([])]
+        got = fit(times, 10.0)
+        np.testing.assert_allclose(np.asarray(got["alpha"])[:, 1], 0.0)

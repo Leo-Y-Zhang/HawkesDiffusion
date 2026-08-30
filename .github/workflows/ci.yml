@@ -20,12 +20,26 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+          python-version: ${ matrix.python-version }
+
+      - name: Install
         run: |
           python -m pip install --upgrade pip
-          python -m pip install numpy scipy
+          python -m pip install -e .
+          python -m pip install ruff
+
+      - name: Licence headers
+        # A file added without an SPDX identifier fails the build rather than
+        # drifting in unnoticed.
+        run: python scripts/check_spdx.py
+
+      - name: Lint
+        run: ruff check .
+
       - name: Unit tests
-        # Offline. Includes simulate-then-recover on known parameters, which is
-        # the only check that the fitter works at all.
         run: python -m unittest discover -s tests -v
+
+      - name: CLI is wired up
+        run: |
+          hawkesdiffusion --help
+          hawkesdiffusion recover --horizon 800

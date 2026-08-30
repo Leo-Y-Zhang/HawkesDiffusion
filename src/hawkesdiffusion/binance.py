@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LicenseRef-Leo-Y-Zhang-Proprietary
 """Fetch real trade event times from Binance's public aggregate-trade endpoint.
 
 Aggregate trades carry a millisecond timestamp and a flag saying whether the
@@ -40,7 +41,7 @@ def fetch_trades(symbol="BTCUSDT", n=6000, use_cache=True):
     os.makedirs(CACHE_DIR, exist_ok=True)
     path = os.path.join(CACHE_DIR, f"trades_{symbol}_{n}.json")
     if use_cache and os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             return json.load(fh)
 
     rows, from_id = [], None

@@ -1,0 +1,34 @@
+HawkesDiffusion - self- and cross-excitation in real event streams
+Copyright 2026 Leo Y. Zhang
+
+This product includes software developed by Leo Y. Zhang.
+
+Proprietary and source-available for evaluation only. No reuse rights are
+granted. See LICENSE for the full terms.
+
+The third-party section below is retained deliberately: those dependencies keep
+their own licences, which are unaffected by the terms covering this work itself.
+
+--------------------------------------------------------------------------------
+THIRD-PARTY DEPENDENCIES
+--------------------------------------------------------------------------------
+
+This project does not bundle or redistribute any third-party code.
+Dependencies are installed from PyPI by the user.
+
+Core (required):
+  numpy   BSD-3-Clause
+  scipy   BSD-3-Clause
+
+Optional extras:
+  [plot] matplotlib   PSF-style
+  [dev]  ruff   MIT
+
+--------------------------------------------------------------------------------
+DATA
+--------------------------------------------------------------------------------
+
+Trade event times are read from Binance's public aggregate-trade endpoint
+at request time and cached locally. No trade data is redistributed:
+results files contain fitted parameters and test statistics only.
+

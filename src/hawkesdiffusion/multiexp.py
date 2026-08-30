@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LicenseRef-Leo-Y-Zhang-Proprietary
 """Multi-exponential (approximately power-law) kernels.
 
 The single-exponential model was rejected on real trade flow: the likelihood

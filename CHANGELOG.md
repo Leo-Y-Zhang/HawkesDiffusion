@@ -1,0 +1,35 @@
+# Changelog
+
+Notable changes to this project, in the format of
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+The project has never been tagged for release, so there are no version headings
+yet, only *Unreleased*. Back-filling release notes for work that shipped without
+them would be writing history after the fact, which is the thing this
+repository's documents are meant not to do.
+
+## [Unreleased]
+
+### Added
+
+- **Multi-exponential kernel** approximating a power law while keeping the O(n)
+  recursion. On live trade flow this gained +1533 log-likelihood over the single
+  exponential and, more importantly, made the branching ratio identified:
+  0.572-0.605 across a 25x range of grids, against 0.531-0.928 before.
+- **CLI** (`hawkesdiffusion fit|recover|residuals|verify`), with the
+  simulate-and-recover check promoted to a first-class command.
+
+### Fixed
+
+- **Unidentified kernel columns.** `alpha[i][j]` multiplies a sum over the
+  events of stream `j`, so a silent stream leaves that parameter absent from
+  the likelihood entirely; the optimiser left it wherever it started and the
+  spectral radius reported the noise. Observed as a branching ratio of 4e8 on a
+  simulated pair whose second stream was deliberately empty. Columns of silent
+  streams are now zeroed, which is the correct normalisation rather than a
+  patch. Results on real data, where both streams are busy, are unchanged.
+- **Tie-breaking.** Nudging tied millisecond timestamps a fixed microsecond
+  apart made the fitter measure the tie-breaking rule rather than the market.
+  Timestamps are interval-censored, so ties are now broken by uniform jitter
+  within the known millisecond.
+
