@@ -14,50 +14,63 @@ reaction to one event decays. The **branching ratio** — the spectral radius of
 [α_ij/β_ij] — is the share of activity that is the market reacting to itself
 rather than to outside information.
 
-## What it found, and the caveat that matters more
+## What it found
 
 Fitted to 4,000 live Binance BTCUSDT trades over 1,312 seconds
 (2,284 buyer-initiated, 1,716 seller-initiated), on 2026-08-30.
 
-The headline number would be a branching ratio of **0.5311**. It should
-not be quoted on its own, because **it is not identified without the kernel**:
+### The single-exponential model fails, and fails informatively
 
-| assumed half-life | log-likelihood | branching ratio |
+With one exponential kernel the likelihood rises monotonically as the kernel
+gets faster, with **no interior optimum** — the signature of a process with no
+single characteristic timescale. Worse, the headline number is not identified:
+
+| kernel | branching ratio across grid choices | verdict |
 |---|---|---|
-| 0.01 s | 5,225.9 **(best)** | 0.5311 |
-| 0.05 s | 3,448.3 | 0.5712 |
-| 0.1 s | 2,674.2 | 0.5989 |
-| 0.25 s | 1,669.8 | 0.6533 |
-| 0.5 s | 954.6 | 0.7034 |
-| 1 s | 310.2 | 0.7632 |
-| 2 s | -255.2 | 0.8285 |
-| 5 s | -881.1 | 0.8996 |
-| 15 s | -1,527.1 | 0.9284 |
+| single exponential | **0.531 to 0.928** | not identified — the answer is whatever half-life you assumed |
+| multi-exponential | **0.572 to 0.605** | stable across a 25× range of grids |
 
-The same data yields an endogeneity anywhere from **0.53 to 0.93**
-depending purely on the decay timescale you assume. Any paper reporting "the
-market is X% endogenous" without stating its kernel is reporting a choice, not
-a measurement.
+An endogeneity figure quoted without its kernel is a choice, not a measurement.
 
-Worse for the model: the likelihood **increases monotonically as the kernel gets
-faster**, right to the edge of the grid. There is no interior optimum. That is
-the known signature of a process with no single characteristic timescale, and it
-is why the literature on trade flow uses power-law rather than exponential
-kernels.
+### The fix: a power law, approximated by a sum of exponentials
 
-And the goodness-of-fit test rejects it outright. Under the time-rescaling
-theorem the compensator differences should be i.i.d. Exp(1); they are not:
+A true power-law kernel costs O(n²) because it has no recursive form. Following
+the market-microstructure literature, it is approximated by 10
+exponentials with geometrically spaced decay rates, which keeps the O(n)
+recursion at one state per component.
 
-| stream | KS statistic | p |
-|---|---|---|
-| buy | 0.2252 | 3.07e-102 |
-| sell | 0.2785 | 4.45e-118 |
+| | log-likelihood | branching ratio | KS statistic (buy) |
+|---|---|---|---|
+| Poisson benchmark | -2,273.3 | — | — |
+| single exponential | 5,225.9 | 0.5311 | 0.2252 |
+| **multi-exponential** | **6,759.4** | **0.5716** | **0.1467** |
 
-So the honest conclusion is a rejection: **a single-exponential bivariate Hawkes
-process does not describe this trade flow at any timescale tested**, and the
-branching ratio it produces is an artefact of the assumed kernel. The model
-still beats a Poisson process by a likelihood ratio of 14,998, so the clustering
-is real — it simply is not exponential.
+That is **+1,533.5** log-likelihood for the richer kernel, and the
+branching ratio becomes a measurement rather than an assumption.
+
+The fit is also 90× faster, for a reason worth recording: the recursive state
+depends only on the decay rates, never on the weights, so every state is
+computed once and the likelihood becomes linear-in-weights inside a log —
+concave, with an exact gradient.
+
+⚠ **The first attempt at this was slower *and worse* than the model it
+contains as a special case.** Decay rates span four orders of magnitude, so raw
+amplitudes do too, and L-BFGS-B stalled. Reparameterising to kernel *norms*
+(a/β — all branching contributions, all the same scale) fixed the conditioning.
+A more flexible model scoring worse than its own special case is always a
+numerical bug, never a modelling result.
+
+### It is still rejected, and the reason is the data, not the kernel
+
+The rescaled residuals still fail the Kolmogorov–Smirnov test
+(0.1467, p = 2.5e-43). Pushing the grid faster keeps improving the fit —
+but **1,367 of 4,000 trades share a millisecond**, and ties were
+broken by uniform jitter within that millisecond. Any gain from a kernel faster
+than ~1 ms is therefore fitting **that jitter**, not the market.
+
+So the grid deliberately stops at a 0.002 s half-life. Beyond that point
+the limit is the timestamp resolution, and no kernel can repair it — that needs
+microsecond data.
 
 ![Kernel norms and impulse responses](kernels.png)
 
@@ -99,9 +112,10 @@ choice, which is what produced the table above.
 Requires `numpy` and `scipy`.
 
 ```
-python analyse.py --n-trades 4000            # cached tape
+python analyse_multi.py                      # both kernels, the headline result
+python analyse.py --n-trades 4000            # single-exponential only
 python analyse.py --n-trades 4000 --refresh  # pull fresh trades
-python -m unittest discover -s tests -v      # 21 tests, offline
+python -m unittest discover -s tests -v      # 29 tests, offline
 ```
 
 ## A note on the streams
@@ -117,12 +131,14 @@ takes any pair of event-time arrays.
 | file | purpose |
 |---|---|
 | `src/hawkesdiffusion/hawkes.py` | likelihood, MLE, timescale scan, simulation, residuals |
+| `src/hawkesdiffusion/multiexp.py` | multi-exponential kernel, precomputed design, exact gradient |
 | `src/hawkesdiffusion/binance.py` | real trade event times, tie handling, caching |
-| `analyse.py` | end-to-end fit, writes `results.json` and `kernels.png` |
+| `analyse.py` | single-kernel fit, writes `results.json` and `kernels.png` |
+| `analyse_multi.py` | both kernels compared, writes `results_multi.json` |
 | `make_readme.py` | renders this file from `results.json` |
 
-Every number above is injected from `results.json`; the generator fails if one
-is missing.
+Every number above is injected from `results.json` and `results_multi.json`;
+the generator fails if one is missing.
 
 ## Scope
 

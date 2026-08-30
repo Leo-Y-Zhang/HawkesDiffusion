@@ -14,42 +14,63 @@ reaction to one event decays. The **branching ratio** — the spectral radius of
 [α_ij/β_ij] — is the share of activity that is the market reacting to itself
 rather than to outside information.
 
-## What it found, and the caveat that matters more
+## What it found
 
 Fitted to <<n_total>> live Binance <<symbol>> trades over <<horizon>> seconds
 (<<n_buy>> buyer-initiated, <<n_sell>> seller-initiated), on <<asof>>.
 
-The headline number would be a branching ratio of **<<branching>>**. It should
-not be quoted on its own, because **it is not identified without the kernel**:
+### The single-exponential model fails, and fails informatively
 
-| assumed half-life | log-likelihood | branching ratio |
+With one exponential kernel the likelihood rises monotonically as the kernel
+gets faster, with **no interior optimum** — the signature of a process with no
+single characteristic timescale. Worse, the headline number is not identified:
+
+| kernel | branching ratio across grid choices | verdict |
 |---|---|---|
-<<scan_rows>>
+| single exponential | **<<s_br_lo>> to <<s_br_hi>>** | not identified — the answer is whatever half-life you assumed |
+| multi-exponential | **<<m_br_lo>> to <<m_br_hi>>** | stable across a 25× range of grids |
 
-The same data yields an endogeneity anywhere from **<<br_lo>> to <<br_hi>>**
-depending purely on the decay timescale you assume. Any paper reporting "the
-market is X% endogenous" without stating its kernel is reporting a choice, not
-a measurement.
+An endogeneity figure quoted without its kernel is a choice, not a measurement.
 
-Worse for the model: the likelihood **increases monotonically as the kernel gets
-faster**, right to the edge of the grid. There is no interior optimum. That is
-the known signature of a process with no single characteristic timescale, and it
-is why the literature on trade flow uses power-law rather than exponential
-kernels.
+### The fix: a power law, approximated by a sum of exponentials
 
-And the goodness-of-fit test rejects it outright. Under the time-rescaling
-theorem the compensator differences should be i.i.d. Exp(1); they are not:
+A true power-law kernel costs O(n²) because it has no recursive form. Following
+the market-microstructure literature, it is approximated by <<m_ncomp>>
+exponentials with geometrically spaced decay rates, which keeps the O(n)
+recursion at one state per component.
 
-| stream | KS statistic | p |
-|---|---|---|
-| buy | <<ks_buy>> | <<p_buy>> |
-| sell | <<ks_sell>> | <<p_sell>> |
+| | log-likelihood | branching ratio | KS statistic (buy) |
+|---|---|---|---|
+| Poisson benchmark | <<poisson_ll>> | — | — |
+| single exponential | <<s_ll>> | <<s_br>> | <<s_ks>> |
+| **multi-exponential** | **<<m_ll>>** | **<<m_br>>** | **<<m_ks>>** |
 
-So the honest conclusion is a rejection: **a single-exponential bivariate Hawkes
-process does not describe this trade flow at any timescale tested**, and the
-branching ratio it produces is an artefact of the assumed kernel. The model
-still beats a Poisson process by a likelihood ratio of <<lr>>, so the clustering
-is real — it simply is not exponential.
+That is **<<improvement>>** log-likelihood for the richer kernel, and the
+branching ratio becomes a measurement rather than an assumption.
+
+The fit is also 90× faster, for a reason worth recording: the recursive state
+depends only on the decay rates, never on the weights, so every state is
+computed once and the likelihood becomes linear-in-weights inside a log —
+concave, with an exact gradient.
+
+⚠ **The first attempt at this was slower *and worse* than the model it
+contains as a special case.** Decay rates span four orders of magnitude, so raw
+amplitudes do too, and L-BFGS-B stalled. Reparameterising to kernel *norms*
+(a/β — all branching contributions, all the same scale) fixed the conditioning.
+A more flexible model scoring worse than its own special case is always a
+numerical bug, never a modelling result.
+
+### It is still rejected, and the reason is the data, not the kernel
+
+The rescaled residuals still fail the Kolmogorov–Smirnov test
+(<<m_ks>>, p = <<m_ks_p>>). Pushing the grid faster keeps improving the fit —
+but **<<n_tied>> of <<n_total>> trades share a millisecond**, and ties were
+broken by uniform jitter within that millisecond. Any gain from a kernel faster
+than ~1 ms is therefore fitting **that jitter**, not the market.
+
+So the grid deliberately stops at a <<res_hl>> s half-life. Beyond that point
+the limit is the timestamp resolution, and no kernel can repair it — that needs
+microsecond data.
 
 ![Kernel norms and impulse responses](kernels.png)
 
@@ -91,7 +112,8 @@ choice, which is what produced the table above.
 Requires `numpy` and `scipy`.
 
 ```
-python analyse.py --n-trades 4000            # cached tape
+python analyse_multi.py                      # both kernels, the headline result
+python analyse.py --n-trades 4000            # single-exponential only
 python analyse.py --n-trades 4000 --refresh  # pull fresh trades
 python -m unittest discover -s tests -v      # <<n_tests>> tests, offline
 ```
@@ -109,12 +131,14 @@ takes any pair of event-time arrays.
 | file | purpose |
 |---|---|
 | `src/hawkesdiffusion/hawkes.py` | likelihood, MLE, timescale scan, simulation, residuals |
+| `src/hawkesdiffusion/multiexp.py` | multi-exponential kernel, precomputed design, exact gradient |
 | `src/hawkesdiffusion/binance.py` | real trade event times, tie handling, caching |
-| `analyse.py` | end-to-end fit, writes `results.json` and `kernels.png` |
+| `analyse.py` | single-kernel fit, writes `results.json` and `kernels.png` |
+| `analyse_multi.py` | both kernels compared, writes `results_multi.json` |
 | `make_readme.py` | renders this file from `results.json` |
 
-Every number above is injected from `results.json`; the generator fails if one
-is missing.
+Every number above is injected from `results.json` and `results_multi.json`;
+the generator fails if one is missing.
 
 ## Scope
 

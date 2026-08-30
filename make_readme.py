@@ -21,6 +21,7 @@ def count_tests():
 
 
 res = json.load(open(os.path.join(HERE, "results.json"), encoding="utf-8"))
+mres = json.load(open(os.path.join(HERE, "results_multi.json"), encoding="utf-8"))
 scan = res["timescale_scan"]
 best_ll = res["log_likelihood"]
 
@@ -48,6 +49,22 @@ V = {
     "ks_sell": f"{ksl['ks_stat']:.4f}",
     "p_sell": f"{ksl['p_value']:.2e}",
     "lr": f"{res['likelihood_ratio']:,.0f}",
+    "s_ll": f"{mres['single']['log_likelihood']:,.1f}",
+    "m_ll": f"{mres['multi']['log_likelihood']:,.1f}",
+    "poisson_ll": f"{mres['poisson_log_likelihood']:,.1f}",
+    "s_br": f"{mres['single']['branching_ratio']:.4f}",
+    "m_br": f"{mres['multi']['branching_ratio']:.4f}",
+    "s_br_lo": f"{mres['single']['branching_range'][0]:.3f}",
+    "s_br_hi": f"{mres['single']['branching_range'][1]:.3f}",
+    "m_br_lo": f"{mres['multi']['branching_range'][0]:.3f}",
+    "m_br_hi": f"{mres['multi']['branching_range'][1]:.3f}",
+    "s_ks": f"{mres['single']['ks'][0]['stat']:.4f}",
+    "m_ks": f"{mres['multi']['ks'][0]['stat']:.4f}",
+    "m_ks_p": f"{mres['multi']['ks'][0]['p']:.1e}",
+    "m_ncomp": mres['multi']['n_components'],
+    "improvement": f"{mres['improvement']:+,.1f}",
+    "n_tied": f"{mres['n_tied_timestamps']:,}",
+    "res_hl": mres['resolution_half_life'],
     "n_tests": count_tests(),
 }
 
