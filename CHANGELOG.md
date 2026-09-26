@@ -28,6 +28,13 @@ repository's documents are meant not to do.
   components. A self-exciting stream with a true branching ratio of 0.15 was
   reported as 0.20. Those weights are now pinned at zero. The real-data fit,
   where both streams are busy, takes exactly the same path as before.
+- **Likelihood reported for a nearly silent stream.** `fit` and
+  `fit_fixed_beta` zeroed the columns of streams with fewer than five events
+  only after the optimiser finished. With one to four events those parameters
+  do enter the likelihood, so the reported log-likelihood belonged to
+  parameters that were not returned (10 units too high in the regression test),
+  and the timescale scan compared such numbers. The columns are now zeroed
+  inside the objective too.
 - **Unidentified kernel columns.** `alpha[i][j]` multiplies a sum over the
   events of stream `j`, so a silent stream leaves that parameter absent from
   the likelihood entirely; the optimiser left it wherever it started and the
