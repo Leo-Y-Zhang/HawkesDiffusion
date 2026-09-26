@@ -21,6 +21,13 @@ repository's documents are meant not to do.
 
 ### Fixed
 
+- **Silent streams in the multi-exponential fit.** The same unidentified-column
+  problem existed in `fit_multi_exp`: for an empty stream the weights it would
+  excite with have zero gradient, so L-BFGS-B returned them at their starting
+  value of 0.02 each, a phantom kernel norm of 0.2 per entry with ten
+  components. A self-exciting stream with a true branching ratio of 0.15 was
+  reported as 0.20. Those weights are now pinned at zero. The real-data fit,
+  where both streams are busy, takes exactly the same path as before.
 - **Unidentified kernel columns.** `alpha[i][j]` multiplies a sum over the
   events of stream `j`, so a silent stream leaves that parameter absent from
   the likelihood entirely; the optimiser left it wherever it started and the

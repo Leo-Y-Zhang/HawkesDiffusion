@@ -119,3 +119,41 @@ class TestKernelAndResiduals(unittest.TestCase):
         self.assertAlmostEqual(hl[0], 0.01, places=6)
         self.assertAlmostEqual(hl[-1], 10.0, places=6)
         self.assertEqual(len(b), 5)
+
+
+class TestUnidentifiedStreams(unittest.TestCase):
+    """A silent stream must not set the branching ratio.
+
+    The single-exponential fitter already zeroes these columns. Here a[i][j][k]
+    multiplies R_ijk and S_jk, both identically zero when stream j is empty, so
+    the gradient with respect to those weights is exactly zero and L-BFGS-B
+    returned them at their starting value of 0.02 each. With ten components
+    that is a phantom kernel norm of 0.2 in every entry of the silent column.
+    """
+
+    def _self_exciting_with_a_silent_partner(self):
+        # true branching ratio 0.3 / 2.0 = 0.15, below the 0.2 artefact
+        times = simulate([0.5, 0.0], [[0.3, 0.0], [0.0, 0.0]],
+                         [[2.0] * 2] * 2, horizon=2000.0, seed=2)
+        self.assertEqual(len(times[1]), 0)
+        return times
+
+    def test_columns_of_silent_streams_are_zero(self):
+        times = self._self_exciting_with_a_silent_partner()
+        got = fit_multi_exp(times, 2000.0, betas=geometric_betas(10, 0.01, 30.0))
+        np.testing.assert_array_equal(np.asarray(got["a"])[:, 1, :], 0.0)
+
+    def test_branching_ratio_is_the_active_streams_own(self):
+        times = self._self_exciting_with_a_silent_partner()
+        got = fit_multi_exp(times, 2000.0, betas=geometric_betas(10, 0.01, 30.0))
+        n = branching_ratio_multi(got["a"], got["betas"])
+        self.assertAlmostEqual(n, 0.15, delta=0.04)
+        norms = branching_matrix_multi(got["a"], got["betas"])
+        self.assertAlmostEqual(n, float(norms[0][0]), places=12)
+
+    def test_zeroing_does_not_change_the_reported_likelihood(self):
+        times = self._self_exciting_with_a_silent_partner()
+        got = fit_multi_exp(times, 2000.0, betas=geometric_betas(10, 0.01, 30.0))
+        self.assertAlmostEqual(
+            got["log_likelihood"],
+            got["design"].log_likelihood(got["mu"], got["a"]), places=6)

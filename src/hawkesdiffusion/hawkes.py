@@ -131,7 +131,12 @@ def fit(times_by_type, horizon, x0=None, maxiter=600):
             "n_iter": int(res.nit)}
 
 
-def _zero_unidentified(alpha, times_by_type, min_events=5):
+# A stream with fewer events than this is treated as silent: the kernels it
+# would excite with are not identified, so their weights are set to zero.
+MIN_EVENTS = 5
+
+
+def _zero_unidentified(alpha, times_by_type, min_events=MIN_EVENTS):
     """Zero the kernel columns of streams that have (almost) no events.
 
     alpha[i][j] multiplies a sum over the events of stream j. If stream j is
