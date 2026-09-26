@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Leo-Y-Zhang/HawkesDiffusion/actions/workflows/ci.yml/badge.svg)](https://github.com/Leo-Y-Zhang/HawkesDiffusion/actions/workflows/ci.yml)
 ![python](https://img.shields.io/badge/python-3.11%2B-blue)
-![tests](https://img.shields.io/badge/tests-31-brightgreen)
+![tests](https://img.shields.io/badge/tests-36-brightgreen)
 ![licence](https://img.shields.io/badge/licence-proprietary%20source--available-lightgrey)
 
 A Hawkes process is a point process that excites itself: every event raises the

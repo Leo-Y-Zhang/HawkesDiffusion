@@ -171,8 +171,12 @@ class TestUnidentifiedStreams(unittest.TestCase):
         self.assertAlmostEqual(n, float(norms[0][0]), places=12)
 
     def test_zeroing_does_not_change_the_reported_likelihood(self):
+        # three events: below the threshold but inside the likelihood, so
+        # zeroing only after the fit would report the wrong likelihood
         times = self._self_exciting_with_a_silent_partner()
+        times[1] = np.array([100.0, 100.05, 250.0])
         got = fit_multi_exp(times, 2000.0, betas=geometric_betas(10, 0.01, 30.0))
+        np.testing.assert_array_equal(np.asarray(got["a"])[:, 1, :], 0.0)
         self.assertAlmostEqual(
             got["log_likelihood"],
             got["design"].log_likelihood(got["mu"], got["a"]), places=6)
