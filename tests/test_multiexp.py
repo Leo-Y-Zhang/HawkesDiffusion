@@ -73,20 +73,39 @@ class TestGradient(unittest.TestCase):
 class TestRecovery(unittest.TestCase):
     def test_recovers_a_two_timescale_process(self):
         """Simulate a process with a fast and a slow component and require the
-        fit to put weight on both, not collapse onto one."""
+        fit to find both, not collapse onto one.
+
+        ``simulate`` only draws single-exponential kernels, so the two-timescale
+        process is built by superposition: in a bivariate process where stream
+        k is excited by *every* event through kernel k (alpha = [[a0, a0],
+        [a1, a1]], beta = [[b0, b0], [b1, b1]]), the merged stream has intensity
+        mu + sum over all events of a0*exp(-b0 t) + a1*exp(-b1 t), which is a
+        univariate Hawkes process with exactly the two-component kernel.
+        """
+        horizon, mu = 2500.0, 0.5
         betas = np.array([np.log(2) / 0.05, np.log(2) / 2.0])
+        norms = np.array([0.3, 0.2])          # true branching ratio 0.5
+        a = norms * betas
+        parts = simulate([mu / 2, mu / 2], [[a[0], a[0]], [a[1], a[1]]],
+                         [[betas[0]] * 2, [betas[1]] * 2], horizon=horizon, seed=0)
+        times = [np.sort(np.concatenate(parts)), np.array([])]
+
+        # the construction really is that process: its residuals under the
+        # true parameters pass the time-rescaling test
+        des = MultiExpDesign(times, horizon, betas)
         a_true = np.zeros((2, 2, 2))
-        a_true[0][0] = [4.0, 0.15]
-        times = simulate([0.5, 1e-9],
-                         [[float(np.sum(a_true[0][0])), 0.0], [0.0, 0.0]],
-                         [[float(betas[0])] * 2] * 2, horizon=1500.0, seed=9)
-        got = fit_multi_exp(times, 1500.0, betas=betas)
+        a_true[0][0] = a
+        resid = rescaled_residuals_multi(des, [mu, 1e-9], a_true)[0]
+        self.assertGreater(stats.kstest(resid, "expon").pvalue, 0.01)
+
+        got = fit_multi_exp(times, horizon, design=des)
         self.assertTrue(got["success"])
-        self.assertGreater(got["a"][0][0].sum(), 0.0)
-        # the fitted branching ratio must be a sane, sub-critical number
-        n = branching_ratio_multi(got["a"], got["betas"])
-        self.assertGreater(n, 0.0)
-        self.assertLess(n, 1.0)
+        fitted = got["a"][0][0] / betas
+        self.assertAlmostEqual(fitted[0], 0.3, delta=0.06, msg="fast component")
+        self.assertAlmostEqual(fitted[1], 0.2, delta=0.08, msg="slow component")
+        self.assertAlmostEqual(got["mu"][0], mu, delta=0.1)
+        self.assertAlmostEqual(
+            branching_ratio_multi(got["a"], got["betas"]), 0.5, delta=0.06)
 
     def test_beats_the_single_exponential_on_its_own_data(self):
         times = simulate([0.4, 1e-9], [[1.2, 0.0], [0.0, 0.0]],
