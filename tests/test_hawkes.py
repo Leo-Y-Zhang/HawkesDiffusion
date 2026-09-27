@@ -23,6 +23,7 @@ from hawkesdiffusion.hawkes import (  # noqa: E402
     branching_matrix,
     branching_ratio,
     fit,
+    fit_fixed_beta,
     half_life,
     intensity_at_events,
     log_likelihood,
@@ -203,9 +204,6 @@ class TestGoodnessOfFit(unittest.TestCase):
         self.assertLess(p, 1e-6, "a badly wrong rate must be rejected")
 
 
-if __name__ == "__main__":
-    unittest.main(verbosity=2)
-
 
 class TestUnidentifiedStreams(unittest.TestCase):
     """A silent stream must not poison the branching ratio.
@@ -231,3 +229,35 @@ class TestUnidentifiedStreams(unittest.TestCase):
         times = [np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]), np.array([])]
         got = fit(times, 10.0)
         np.testing.assert_allclose(np.asarray(got["alpha"])[:, 1], 0.0)
+
+    def _nearly_silent_second_stream(self):
+        times = simulate([0.5, 0.0], [[0.3, 0.0], [0.0, 0.0]],
+                         [[2.0, 2.0], [2.0, 2.0]], horizon=500.0, seed=2)
+        # three events: below the threshold, but they do enter the likelihood
+        times[1] = np.array([100.0, 100.05, 250.0])
+        return times
+
+    def test_reported_likelihood_belongs_to_the_returned_parameters(self):
+        """A stream with one to four events has its column zeroed. If that
+        happens only after the optimiser finishes, the reported likelihood is
+        that of the unzeroed parameters: it came out 10 units too high here."""
+        times = self._nearly_silent_second_stream()
+        got = fit(times, 500.0)
+        np.testing.assert_array_equal(np.asarray(got["alpha"])[:, 1], 0.0)
+        self.assertAlmostEqual(
+            got["log_likelihood"],
+            log_likelihood(times, 500.0, got["mu"], got["alpha"], got["beta"]),
+            places=6)
+
+    def test_fixed_beta_likelihood_belongs_to_the_returned_parameters(self):
+        times = self._nearly_silent_second_stream()
+        got = fit_fixed_beta(times, 500.0, np.full((2, 2), 2.0))
+        np.testing.assert_array_equal(np.asarray(got["alpha"])[:, 1], 0.0)
+        self.assertAlmostEqual(
+            got["log_likelihood"],
+            log_likelihood(times, 500.0, got["mu"], got["alpha"], got["beta"]),
+            places=6)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

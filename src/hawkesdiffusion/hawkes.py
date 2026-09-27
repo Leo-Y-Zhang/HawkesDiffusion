@@ -118,6 +118,9 @@ def fit(times_by_type, horizon, x0=None, maxiter=600):
 
     def neg(x):
         mu, alpha, beta = _unpack(x, d)
+        # zeroed inside the objective, not only afterwards, so the reported
+        # log-likelihood belongs to the parameters that are returned
+        alpha = _zero_unidentified(alpha, times_by_type)
         ll = log_likelihood(times_by_type, horizon, mu, alpha, beta)
         return -ll if np.isfinite(ll) else 1e12
 
@@ -131,7 +134,12 @@ def fit(times_by_type, horizon, x0=None, maxiter=600):
             "n_iter": int(res.nit)}
 
 
-def _zero_unidentified(alpha, times_by_type, min_events=5):
+# A stream with fewer events than this is treated as silent: the kernels it
+# would excite with are not identified, so their weights are set to zero.
+MIN_EVENTS = 5
+
+
+def _zero_unidentified(alpha, times_by_type, min_events=MIN_EVENTS):
     """Zero the kernel columns of streams that have (almost) no events.
 
     alpha[i][j] multiplies a sum over the events of stream j. If stream j is
@@ -143,6 +151,11 @@ def _zero_unidentified(alpha, times_by_type, min_events=5):
 
     Zero is the right normalisation, not a fudge: a stream with no events
     excites nothing, so its kernel norm genuinely is zero.
+
+    The fitters apply this inside the objective as well as to the result. A
+    stream with one to four events does enter the likelihood, so zeroing its
+    column only after the optimiser has finished would report the likelihood
+    of parameters that are not the ones returned.
     """
     alpha = np.array(alpha, dtype=float, copy=True)
     for j, t in enumerate(times_by_type):
@@ -267,7 +280,7 @@ def fit_fixed_beta(times_by_type, horizon, beta, maxiter=400):
     def neg(x):
         x = np.clip(x, -60.0, 60.0)
         mu = np.exp(x[:d])
-        alpha = np.exp(x[d:]).reshape(d, d)
+        alpha = _zero_unidentified(np.exp(x[d:]).reshape(d, d), times_by_type)
         ll = log_likelihood(times_by_type, horizon, mu, alpha, beta)
         return -ll if np.isfinite(ll) else 1e12
 

@@ -28,7 +28,7 @@ from __future__ import annotations
 import numpy as np
 from scipy.optimize import minimize
 
-from .hawkes import _recursive_state
+from .hawkes import MIN_EVENTS, _recursive_state
 
 
 def geometric_betas(n_components=8, half_life_fast=0.01, half_life_slow=30.0):
@@ -151,6 +151,12 @@ def fit_multi_exp(times_by_type, horizon, betas=None, n_components=8,
     Non-negativity is imposed as a bound rather than by a log transform, so a
     component the data does not want can sit exactly at zero instead of being
     pushed to minus infinity.
+
+    Weights excited by a stream with (almost) no events are pinned at zero, the
+    same normalisation the single-exponential fitter applies. For an empty
+    stream j, R_ijk and S_jk are identically zero, so a_ijk has zero gradient
+    and would otherwise come back at its starting value, adding a phantom
+    kernel norm of 0.02 per component to the branching matrix.
     """
     if betas is None:
         betas = geometric_betas(n_components)
@@ -158,9 +164,13 @@ def fit_multi_exp(times_by_type, horizon, betas=None, n_components=8,
 
     rates = np.array([max(len(t), 1) / horizon for t in des.times])
     # start every component at a small equal share of the branching budget
-    x0 = np.concatenate([np.maximum(rates * 0.5, 1e-6),
-                         np.full(des.d * des.d * des.m, 0.02)])
-    bounds = [(1e-9, None)] * des.d + [(0.0, None)] * (des.d * des.d * des.m)
+    w0 = np.full((des.d, des.d, des.m), 0.02)
+    silent = [len(t) < MIN_EVENTS for t in des.times]
+    w0[:, silent, :] = 0.0
+    x0 = np.concatenate([np.maximum(rates * 0.5, 1e-6), w0.ravel()])
+    bounds = [(1e-9, None)] * des.d + [
+        (0.0, 0.0) if silent[j] else (0.0, None)
+        for i in range(des.d) for j in range(des.d) for k in range(des.m)]
 
     res = minimize(des.neg_ll_and_grad, x0, jac=True, method="L-BFGS-B",
                    bounds=bounds, options={"maxiter": max_iter, "ftol": 1e-12})
