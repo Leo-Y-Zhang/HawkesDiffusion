@@ -47,11 +47,21 @@ recursion at one state per component.
 | | log-likelihood | branching ratio | KS statistic (buy) |
 |---|---|---|---|
 | Poisson benchmark | -2,273.3 | — | — |
-| single exponential | 5,225.9 | 0.5311 | 0.2252 |
-| **multi-exponential** | **6,759.4** | **0.5716** | **0.1467** |
+| single exponential (best half-life 10 ms) | 5,225.9 | 0.5311 | 0.2252 |
+| **multi-exponential, fastest half-life 10 ms** | **5,239.6** | **0.5773** | — |
+| multi-exponential, fastest half-life 2 ms | 6,759.4 | 0.5716 | 0.1467 |
 
-That is **+1,533.5** log-likelihood for the richer kernel, and the
+Compared like for like — both kernels allowed nothing faster than a
+10 ms half-life, the fastest the single-exponential grid offers and
+the one it picks — the richer kernel gains **+13.7**
+log-likelihood. The fit gain is modest; what matters more is that the
 branching ratio becomes a measurement rather than an assumption.
+
+Extending the multi-exponential grid down to 2 ms adds a further
++1,519.8, for +1,533.5 over the single exponential in all.
+That larger figure is not a kernel-shape comparison: almost all of it comes
+from timescales the single exponential was never offered, and they sit close
+to the millisecond resolution discussed below.
 
 The fit is also 90× faster, for a reason worth recording: the recursive state
 depends only on the decay rates, never on the weights, so every state is
@@ -69,9 +79,10 @@ numerical bug, never a modelling result.
 
 The rescaled residuals still fail the Kolmogorov–Smirnov test
 (0.1467, p = 2.5e-43). Pushing the grid faster keeps improving the fit —
-but **1,367 of 4,000 trades share a millisecond**, and ties were
-broken by uniform jitter within that millisecond. Any gain from a kernel faster
-than ~1 ms is therefore fitting **that jitter**, not the market.
+but **1,367 of 4,000 trades share a millisecond with an earlier
+trade**, and ties were broken by uniform jitter within that millisecond. Any
+gain from a kernel faster than ~1 ms is therefore fitting **that jitter**, not
+the market.
 
 So the grid deliberately stops at a 0.002 s half-life. Beyond that point
 the limit is the timestamp resolution, and no kernel can repair it — that needs

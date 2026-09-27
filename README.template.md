@@ -47,11 +47,21 @@ recursion at one state per component.
 | | log-likelihood | branching ratio | KS statistic (buy) |
 |---|---|---|---|
 | Poisson benchmark | <<poisson_ll>> | — | — |
-| single exponential | <<s_ll>> | <<s_br>> | <<s_ks>> |
-| **multi-exponential** | **<<m_ll>>** | **<<m_br>>** | **<<m_ks>>** |
+| single exponential (best half-life <<matched_ms>> ms) | <<s_ll>> | <<s_br>> | <<s_ks>> |
+| **multi-exponential, fastest half-life <<matched_ms>> ms** | **<<mm_ll>>** | **<<mm_br>>** | — |
+| multi-exponential, fastest half-life <<res_ms>> ms | <<m_ll>> | <<m_br>> | <<m_ks>> |
 
-That is **<<improvement>>** log-likelihood for the richer kernel, and the
+Compared like for like — both kernels allowed nothing faster than a
+<<matched_ms>> ms half-life, the fastest the single-exponential grid offers and
+the one it picks — the richer kernel gains **<<improvement_matched>>**
+log-likelihood. The fit gain is modest; what matters more is that the
 branching ratio becomes a measurement rather than an assumption.
+
+Extending the multi-exponential grid down to <<res_ms>> ms adds a further
+<<improvement_fast>>, for <<improvement>> over the single exponential in all.
+That larger figure is not a kernel-shape comparison: almost all of it comes
+from timescales the single exponential was never offered, and they sit close
+to the millisecond resolution discussed below.
 
 The fit is also 90× faster, for a reason worth recording: the recursive state
 depends only on the decay rates, never on the weights, so every state is
@@ -69,9 +79,10 @@ numerical bug, never a modelling result.
 
 The rescaled residuals still fail the Kolmogorov–Smirnov test
 (<<m_ks>>, p = <<m_ks_p>>). Pushing the grid faster keeps improving the fit —
-but **<<n_tied>> of <<n_total>> trades share a millisecond**, and ties were
-broken by uniform jitter within that millisecond. Any gain from a kernel faster
-than ~1 ms is therefore fitting **that jitter**, not the market.
+but **<<n_tied>> of <<n_total>> trades share a millisecond with an earlier
+trade**, and ties were broken by uniform jitter within that millisecond. Any
+gain from a kernel faster than ~1 ms is therefore fitting **that jitter**, not
+the market.
 
 So the grid deliberately stops at a <<res_hl>> s half-life. Beyond that point
 the limit is the timestamp resolution, and no kernel can repair it — that needs

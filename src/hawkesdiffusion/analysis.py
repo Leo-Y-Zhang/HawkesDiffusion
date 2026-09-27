@@ -34,7 +34,8 @@ def run(symbol="BTCUSDT", n_trades=4000, refresh=False, quiet=False,
     horizon = meta["horizon_seconds"]
     times = [b, s]
     say(f"{symbol}: {len(b)} buyer-initiated, {len(s)} seller-initiated over "
-        f"{horizon:.0f}s; {meta['n_tied_timestamps']} tied timestamps")
+        f"{horizon:.0f}s; {meta['n_tied_timestamps']} trades share a "
+        "millisecond with an earlier trade")
 
     single = fit_beta_grid(times, horizon)
     sr = rescaled_residuals(times, horizon, single["mu"], single["alpha"],
@@ -59,6 +60,19 @@ def run(symbol="BTCUSDT", n_trades=4000, refresh=False, quiet=False,
     multi_range = [min(x["branching_ratio"] for x in stability),
                    max(x["branching_ratio"] for x in stability)]
 
+    # Like-for-like comparison. The headline multi-exponential grid reaches a
+    # 2 ms half-life, faster than anything the single exponential was offered,
+    # so its gain over the single kernel mixes the richer kernel shape with the
+    # extra fast components. Matching the fastest timescale isolates the shape.
+    matched_hl = single["half_life_seconds"]
+    matched = next((x for x in stability
+                    if np.isclose(x["fastest_half_life"], matched_hl)), None)
+    if matched is None:
+        bb = geometric_betas(10, matched_hl, 60.0)
+        matched_ll = fit_multi_exp(times, horizon, betas=bb)["log_likelihood"]
+    else:
+        matched_ll = matched["log_likelihood"]
+
     rates = [len(t) / horizon for t in times]
     poisson = log_likelihood(times, horizon, rates, [[0.0, 0.0]] * 2,
                              [[1.0, 1.0]] * 2)
@@ -69,7 +83,10 @@ def run(symbol="BTCUSDT", n_trades=4000, refresh=False, quiet=False,
     say(f"  multi-exponential  : logLik {multi['log_likelihood']:9.1f}  "
         f"branching {branching_ratio_multi(multi['a'], betas):.4f}  "
         f"KS {mk[0].statistic:.4f}")
-    say(f"  improvement        : {multi['log_likelihood'] - single['log_likelihood']:+.1f}")
+    say(f"  improvement        : {matched_ll - single['log_likelihood']:+.1f}"
+        f" at a matched {matched_hl * 1000:g} ms fastest half-life;"
+        f" {multi['log_likelihood'] - single['log_likelihood']:+.1f} with the"
+        f" {RESOLUTION_HALF_LIFE * 1000:g} ms grid")
     say("\n  branching ratio across grid choices")
     say(f"    single exponential : {single_range[0]:.3f} to {single_range[1]:.3f}"
         "   NOT identified")
@@ -97,6 +114,8 @@ def run(symbol="BTCUSDT", n_trades=4000, refresh=False, quiet=False,
                   "stability_scan": stability,
                   "ks": [{"stat": k.statistic, "p": k.pvalue} for k in mk]},
         "improvement": multi["log_likelihood"] - single["log_likelihood"],
+        "matched_half_life": matched_hl,
+        "improvement_matched": matched_ll - single["log_likelihood"],
     }
     with open(out_path, "w", encoding="utf-8") as fh:
         json.dump(out, fh, indent=1)

@@ -106,5 +106,7 @@
    }
   ]
  },
- "improvement": 1533.4894866414943
+ "improvement": 1533.4894866414943,
+ "matched_half_life": 0.01,
+ "improvement_matched": 13.67950485374422
 }
