@@ -106,6 +106,9 @@ def event_streams(symbol="BTCUSDT", n=6000, use_cache=True):
         "first_timestamp_ms": rows[0]["T"],
         "last_timestamp_ms": rows[-1]["T"],
         "horizon_seconds": horizon,
+        # Trades whose millisecond was already taken by an earlier trade, i.e.
+        # the number of events tie-breaking has to move -- not the number of
+        # trades that share a millisecond (each tied group's first is left out).
         "n_tied_timestamps": int(len(rows) - len(set(r["T"] for r in rows))),
     }
     return b, s, meta

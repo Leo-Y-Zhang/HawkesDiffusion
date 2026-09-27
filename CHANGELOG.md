@@ -13,14 +13,24 @@ repository's documents are meant not to do.
 ### Added
 
 - **Multi-exponential kernel** approximating a power law while keeping the O(n)
-  recursion. On live trade flow this gained +1533 log-likelihood over the single
-  exponential and, more importantly, made the branching ratio identified:
+  recursion. On live trade flow, at the same 10 ms fastest half-life as the
+  single exponential, it gained +13.7 log-likelihood and, more importantly,
+  made the branching ratio identified:
   0.572-0.605 across a 25x range of grids, against 0.531-0.928 before.
 - **CLI** (`hawkesdiffusion fit|recover|residuals|verify`), with the
   simulate-and-recover check promoted to a first-class command.
 
 ### Fixed
 
+- **Headline likelihood gain was not like for like.** The README quoted
+  +1,533.5 log-likelihood for the multi-exponential kernel, but that fit had a
+  2 ms component while the single exponential's fastest half-life was 10 ms.
+  At a matched 10 ms the gain is +13.7; the other +1,519.8 comes from the
+  faster components. The README now leads with the matched figure, and
+  `results_multi.json` records it as `improvement_matched`.
+- **Tie count wording.** The README said 1,367 trades "share a millisecond";
+  the number counts trades that share a millisecond with an *earlier* trade
+  (each tied group's first trade is not counted).
 - **Silent streams in the multi-exponential fit.** The same unidentified-column
   problem existed in `fit_multi_exp`: for an empty stream the weights it would
   excite with have zero gradient, so L-BFGS-B returned them at their starting

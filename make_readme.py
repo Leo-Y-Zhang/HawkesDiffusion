@@ -33,6 +33,11 @@ for r in scan:
 
 kb, ksl = res["residual_tests"][0], res["residual_tests"][1]
 
+# The multi-exponential fit whose fastest half-life matches the single
+# exponential's: the like-for-like comparison the headline has to quote.
+matched = next(x for x in mres["multi"]["stability_scan"]
+               if abs(x["fastest_half_life"] - mres["matched_half_life"]) < 1e-12)
+
 V = {
     "asof": res["asof"][:10],
     "symbol": res["symbol"],
@@ -63,6 +68,12 @@ V = {
     "m_ks_p": f"{mres['multi']['ks'][0]['p']:.1e}",
     "m_ncomp": mres['multi']['n_components'],
     "improvement": f"{mres['improvement']:+,.1f}",
+    "improvement_matched": f"{mres['improvement_matched']:+,.1f}",
+    "improvement_fast": f"{mres['improvement'] - mres['improvement_matched']:+,.1f}",
+    "matched_ms": f"{mres['matched_half_life'] * 1000:g}",
+    "res_ms": f"{mres['resolution_half_life'] * 1000:g}",
+    "mm_ll": f"{matched['log_likelihood']:,.1f}",
+    "mm_br": f"{matched['branching_ratio']:.4f}",
     "n_tied": f"{mres['n_tied_timestamps']:,}",
     "res_hl": mres['resolution_half_life'],
     "n_tests": count_tests(),
