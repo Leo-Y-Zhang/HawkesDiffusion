@@ -1,0 +1,598 @@
+{
+  "before": [
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "state-includes-equal-time",
+      "line": 42,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_a_recent_event_raises_the_intensity"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "state-no-decay",
+      "line": 41,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_recovers_a_univariate_self_exciting_process"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "intensity-transposed",
+      "line": 58,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "ll-baseline-sign",
+      "line": 69,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_excitation_raises_the_likelihood_of_clustered_data"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "ll-compensator-no-decay",
+      "line": 74,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_log_likelihood_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "ll-compensator-no-norm",
+      "line": 75,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_excitation_raises_the_likelihood_of_clustered_data"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "ll-intensity-transposed",
+      "line": 79,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_log_likelihood_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "silent-boundary",
+      "line": 162,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "silent-mutates-input",
+      "line": 160,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "branching-min-eigenvalue",
+      "line": 181,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_branching_ratio_of_a_diagonal_system"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "half-life-no-ln2",
+      "line": 188,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_half_life_is_ln2_over_beta"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "grid-keeps-worst",
+      "line": 316,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "residuals-no-norm",
+      "line": 258,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "residuals-not-differenced",
+      "line": 261,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_residuals_of_a_poisson_process_are_exponential"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "residuals-cross-transposed",
+      "line": 255,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "simulate-no-thinning",
+      "line": 229,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_recovers_a_univariate_self_exciting_process"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "simulate-type-always-first",
+      "line": 230,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_poisson_simulation_has_about_the_right_count"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "geometric-no-ln2",
+      "line": 42,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_geometric_betas_span_the_requested_half_lives"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "design-compensator-sign",
+      "line": 65,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_log_likelihood_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "multi-ll-no-norm",
+      "line": 88,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_log_likelihood_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "multi-branching-times-beta",
+      "line": 187,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_branching_matrix_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "multi-silent-boundary",
+      "line": 168,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "unpack-divides",
+      "line": 112,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_analytic_gradient_matches_finite_differences"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "maker-flag-swapped",
+      "line": 81,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "milliseconds-wrong-scale",
+      "line": 80,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "jitter-ten-milliseconds",
+      "line": 98,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "jitter-unsorted",
+      "line": 99,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "horizon-no-margin",
+      "line": 103,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "ties-counted-wrong",
+      "line": 112,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "trades-sorted-descending",
+      "line": 61,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "trades-not-deduplicated",
+      "line": 61,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "empty-tape-accepted",
+      "line": 75,
+      "status": "survived"
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "get-no-retry",
+      "line": 28,
+      "status": "survived"
+    }
+  ],
+  "after": [
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "state-includes-equal-time",
+      "line": 42,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_intensity_matches_the_direct_sum_with_asymmetric_cross_terms"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "state-no-decay",
+      "line": 41,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_intensity_matches_the_direct_sum_with_asymmetric_cross_terms"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "intensity-transposed",
+      "line": 58,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_intensity_matches_the_direct_sum_with_asymmetric_cross_terms"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "ll-baseline-sign",
+      "line": 69,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_excitation_raises_the_likelihood_of_clustered_data"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "ll-compensator-no-decay",
+      "line": 74,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_log_likelihood_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "ll-compensator-no-norm",
+      "line": 75,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_excitation_raises_the_likelihood_of_clustered_data"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "ll-intensity-transposed",
+      "line": 79,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_log_likelihood_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "silent-boundary",
+      "line": 162,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_a_stream_is_silent_below_min_events_and_active_at_it"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "silent-mutates-input",
+      "line": 160,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_a_stream_is_silent_below_min_events_and_active_at_it"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "branching-min-eigenvalue",
+      "line": 181,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_branching_ratio_of_a_diagonal_system"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "half-life-no-ln2",
+      "line": 188,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_half_life_is_ln2_over_beta"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "grid-keeps-worst",
+      "line": 316,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_the_best_likelihood_wins_and_every_timescale_is_reported"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "residuals-no-norm",
+      "line": 258,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_residuals_are_differences_of_the_direct_compensator"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "residuals-not-differenced",
+      "line": 261,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_residuals_are_differences_of_the_direct_compensator"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "residuals-cross-transposed",
+      "line": 255,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_residuals_are_differences_of_the_direct_compensator"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "simulate-no-thinning",
+      "line": 229,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_recovers_a_univariate_self_exciting_process"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/hawkes.py",
+      "id": "simulate-type-always-first",
+      "line": 230,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_poisson_simulation_has_about_the_right_count"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "geometric-no-ln2",
+      "line": 42,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_geometric_betas_span_the_requested_half_lives"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "design-compensator-sign",
+      "line": 65,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_log_likelihood_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "multi-ll-no-norm",
+      "line": 88,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_log_likelihood_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "multi-branching-times-beta",
+      "line": 187,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_branching_matrix_matches"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "multi-silent-boundary",
+      "line": 168,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_multi_exp_pins_exactly_the_silent_columns"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/multiexp.py",
+      "id": "unpack-divides",
+      "line": 112,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_analytic_gradient_matches_finite_differences"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "maker-flag-swapped",
+      "line": 81,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_the_maker_flag_splits_buyers_from_sellers"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "milliseconds-wrong-scale",
+      "line": 80,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_the_maker_flag_splits_buyers_from_sellers"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "jitter-ten-milliseconds",
+      "line": 98,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_the_maker_flag_splits_buyers_from_sellers"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "jitter-unsorted",
+      "line": 99,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_jitter_stays_inside_the_millisecond_and_keeps_order"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "horizon-no-margin",
+      "line": 103,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_horizon_and_tie_count"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "ties-counted-wrong",
+      "line": 112,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_horizon_and_tie_count"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "trades-sorted-descending",
+      "line": 61,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_trades_are_deduplicated_by_id_and_sorted_by_time"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "trades-not-deduplicated",
+      "line": 61,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "FAIL: test_trades_are_deduplicated_by_id_and_sorted_by_time"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "empty-tape-accepted",
+      "line": 75,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "ERROR: test_an_empty_tape_is_an_error"
+      ]
+    },
+    {
+      "module": "src/hawkesdiffusion/binance.py",
+      "id": "get-no-retry",
+      "line": 28,
+      "status": "killed",
+      "command": "python -m unittest discover -f -s tests",
+      "failures": [
+        "ERROR: test_get_retries_before_giving_up"
+      ]
+    }
+  ]
+}
